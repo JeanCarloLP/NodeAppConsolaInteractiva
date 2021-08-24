@@ -1,20 +1,41 @@
 require('colors');
-const { inquirerMenu, pausa } = require('./helpers/inquirer');
+
+const { guardarDB, leerDB } = require('./helpers/guardarArchivo');
+const { inquirerMenu,
+        pausa,
+        leerInput } = require('./helpers/inquirer');
+
 const Tareas = require('./models/tareas');
 //const Tarea = require('./models/tarea');
 
 console.clear();
 
 const main = async() =>{
+    
+    const tareas = new Tareas();
+    const tareasDB = leerDB();
     let opt = '';
+    
+    if( tareasDB ) {
+        tareas.cargarTareasFromArray( tareasDB );
+    }
+
     do{
         opt = await inquirerMenu();
-        console.log({ opt });
 
-        // const tareas = new Tareas();
-        // const tarea = new Tarea('Comprar comida');
-        // tareas._listado[tarea.id] = tarea;
-        // console.log(tareas);
+        switch (opt) {
+            case '1':
+                const desc = await leerInput( 'Descripcion:');
+                tareas.crearTarea( desc );
+                break;
+            case '2':
+                tareas.listadoCompleto();
+                break;
+            default:
+                break;
+        }
+
+        guardarDB( tareas.listadoArr );
         await pausa();
     } while( opt !== '0' );
 }
