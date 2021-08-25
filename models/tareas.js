@@ -9,6 +9,10 @@ const Tarea = require('./tarea');
 class Tareas {
     _listado = {};
 
+    constructor() {
+        this._listado = {};
+    }
+
     get listadoArr() {
         const listado = [];
         Object.keys(this._listado).forEach( key => {
@@ -19,14 +23,16 @@ class Tareas {
         return listado;
     }
 
+    borrarTarea( id='') {
+        if( this._listado[id] ) {
+            delete this._listado[id];
+        }
+    }
+
     cargarTareasFromArray( tareas = []) {
         tareas.forEach( tarea => {
             this._listado[tarea.id] = tarea;
         });
-    }
-
-    constructor() {
-        this._listado = {};
     }
 
     crearTarea( desc = ''){
@@ -43,6 +49,28 @@ class Tareas {
                             : 'Tarea Pendiente'.red
 
             console.log( `${idx} ${desc} :: ${estado}`);
+        });
+    }
+
+    listarPendientesCompletadas( completadas = true ) {
+        let contador = 0;
+        this.listadoArr.forEach( tarea => {
+            const { desc, completadoEn } = tarea;
+            const estado = ( completadoEn )
+                            ? 'Tarea Completada'.green
+                            : 'Tarea Pendiente'.red
+
+            if(completadas){
+                if( completadoEn ){
+                    contador += 1;
+                    console.log( `${ (contador + '.- ').green } ${ desc } :: ${ `Tarea completada el ` + completadoEn }`);
+                }
+            } else {
+                if( !completadoEn ){
+                    contador += 1;
+                    console.log( `${(contador + '.- ').green} ${desc} :: ${estado}`);
+                }
+            }
         });
     }
 }

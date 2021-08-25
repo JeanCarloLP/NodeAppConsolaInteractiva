@@ -1,6 +1,7 @@
 require('colors');
 
 const inquirer = require('inquirer');
+
 const preguntas = [
     {
         type: 'list',
@@ -49,19 +50,6 @@ const inquirerMenu = async() => {
     return opcion;
 }
 
-const pausa = async() => {
-    const question = [
-        {
-            type: 'input',
-            name: 'pausa',
-            message: `Presione ${ 'ENTER'.green } para continuar\n`
-        }
-    ];
-
-    console.log('\n')
-    await inquirer.prompt( question );
-};
-
 const leerInput = async( message ) => {
     const question = [
         {
@@ -81,8 +69,44 @@ const leerInput = async( message ) => {
     return desc;
 }
 
+const listadoBorrarTareas = async( tareas = [] ) => {
+    const choices = tareas.map( ( tarea, i ) => {
+        const idx = `${ (i+1)}`.green;
+        return {
+            value: tarea.id,
+            name: `${ idx } ${ tarea.desc }`
+        }
+    })
+
+    const preguntas = [
+        {
+            type: 'list',
+            name: 'id',
+            message: 'Borrar',
+            choices
+        }
+    ];
+
+    const { id } = await inquirer.prompt(preguntas);
+    return id;
+}
+
+const pausa = async() => {
+    const question = [
+        {
+            type: 'input',
+            name: 'pausa',
+            message: `Presione ${ 'ENTER'.green } para continuar\n`
+        }
+    ];
+
+    console.log('\n')
+    await inquirer.prompt( question );
+};
+
 module.exports = {
     inquirerMenu,
-    pausa,
-    leerInput
+    leerInput,
+    listadoBorrarTareas,
+    pausa
 }
